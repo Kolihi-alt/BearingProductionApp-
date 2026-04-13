@@ -1,0 +1,25 @@
+﻿<Page x:Class="BearingProductionApp.Views.RegisterPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+      Title="Регистрация" d:DesignHeight="600" d:DesignWidth="1000">
+    <Grid Background="#F5F5F5">
+        <Border Background="White" Width="400" Padding="20" CornerRadius="8" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel>
+                <TextBlock Text="Регистрация" Style="{StaticResource HeaderText}" HorizontalAlignment="Center"/>
+                <TextBlock Text="ФИО:" Style="{StaticResource LabelText}"/>
+                <TextBox x:Name="NameTextBox" Style="{StaticResource TextBoxStyle}"/>
+                <TextBlock Text="Логин:" Style="{StaticResource LabelText}"/>
+                <TextBox x:Name="LoginTextBox" Style="{StaticResource TextBoxStyle}"/>
+                <TextBlock Text="Пароль:" Style="{StaticResource LabelText}"/>
+                <PasswordBox x:Name="PasswordBox" Style="{StaticResource PasswordBoxStyle}"/>
+                <TextBlock Text="Роль:" Style="{StaticResource LabelText}"/>
+                <ComboBox x:Name="RoleComboBox" Style="{StaticResource ComboBoxStyle}" DisplayMemberPath="Name" SelectedValuePath="Id"/>
+                <Button Content="Зарегистрироваться" Click="RegisterButton_Click" Style="{StaticResource ButtonStyle}" Margin="0,10,0,5"/>
+                <Button Content="Назад" Click="BackButton_Click" Style="{StaticResource ButtonStyle}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

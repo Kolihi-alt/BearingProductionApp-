@@ -1,0 +1,188 @@
+﻿<!-- Views/WorkerPage.xaml -->
+<Page x:Class="BearingProductionApp.Views.WorkerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Панель рабочего" Height="550" Width="900">
+
+    <Page.Resources>
+        <Style x:Key="WorkerRowStyle" TargetType="ListViewItem">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="Отлично">
+                    <Setter Property="Background" Value="#90EE90"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="Хорошо">
+                    <Setter Property="Background" Value="#FFEB3B"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="Норма">
+                    <Setter Property="Background" Value="#FFB6C1"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="#F5F5F5" Margin="5">
+        <TabControl Margin="5">
+
+            <!-- Новая запись -->
+            <TabItem Header="Новая запись">
+                <Border Background="White" Margin="5" Padding="15" CornerRadius="5" 
+                        Width="400" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel>
+                        <TextBlock Text="Добавить запись" FontSize="14" FontWeight="Bold" 
+                                  Margin="0,0,0,15" HorizontalAlignment="Center"/>
+
+                        <TextBlock Text="Тип подшипника:"/>
+                        <ComboBox x:Name="BearingTypeCombo" DisplayMemberPath="TypeName" 
+                                 SelectedValuePath="BearingTypeId" Height="28" Margin="0,3,0,10"/>
+
+                        <TextBlock Text="Количество:"/>
+                        <TextBox x:Name="QuantityBox" Height="28" Margin="0,3,0,15"/>
+
+                        <WrapPanel HorizontalAlignment="Center">
+                            <Button Content="Добавить" Click="AddRecord_Click" Width="100" Height="30" Margin="5"/>
+                            <Button Content="Очистить" Click="ClearForm_Click" Width="100" Height="30" Margin="5"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+
+            <!-- Мои записи -->
+            <TabItem Header="Мои записи">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Фильтры -->
+                    <Border Background="White" Margin="3" Padding="8" CornerRadius="5">
+                        <WrapPanel>
+                            <TextBlock Text="Поиск:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <TextBox x:Name="SearchBox" TextChanged="SearchBox_TextChanged" Width="150" Height="23"/>
+
+                            <TextBlock Text="С:" VerticalAlignment="Center" Margin="15,0,5,0"/>
+                            <DatePicker x:Name="DateFrom" SelectedDateChanged="DateFilter_Changed" Width="110" Height="25"/>
+
+                            <TextBlock Text="По:" VerticalAlignment="Center" Margin="5,0,5,0"/>
+                            <DatePicker x:Name="DateTo" SelectedDateChanged="DateFilter_Changed" Width="110" Height="25"/>
+
+                            <Button Content="Сбросить" Click="ResetFilters_Click" Margin="15,0,0,0" Width="70" Height="25"/>
+                        </WrapPanel>
+                    </Border>
+
+                    <!-- Список -->
+                    <Border Grid.Row="1" Background="White" Margin="3" Padding="8" CornerRadius="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock Text="Группировка:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <ComboBox x:Name="GroupCombo" SelectionChanged="GroupCombo_Changed" Width="130" Height="25">
+                                    <ComboBoxItem Content="Без группировки" IsSelected="True"/>
+                                    <ComboBoxItem Content="По дате"/>
+                                    <ComboBoxItem Content="По статусу"/>
+                                    <ComboBoxItem Content="По типу"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <ListView x:Name="MyRecordsListView" Grid.Row="1"
+                                     ItemContainerStyle="{StaticResource WorkerRowStyle}">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Дата" Width="130">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding ProductionDate, StringFormat=dd.MM.yyyy HH:mm}"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+
+                                        <GridViewColumn Header="Тип подшипника" DisplayMemberBinding="{Binding BearingTypes.TypeName}" Width="200"/>
+
+                                        <GridViewColumn Header="Кол-во" Width="70">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Quantity}" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+
+                                        <GridViewColumn Header="Цена" Width="85">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding BearingTypes.Price, StringFormat={}{0:F2}}" HorizontalAlignment="Right"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+
+                                        <GridViewColumn Header="Стоимость" Width="100">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding TotalCost, StringFormat={}{0:F2}}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+
+                                        <GridViewColumn Header="Статус" DisplayMemberBinding="{Binding Status}" Width="80"/>
+                                    </GridView>
+                                </ListView.View>
+
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Редактировать" Click="EditMyRecord_Click"/>
+                                        <MenuItem Header="Удалить" Click="DeleteMyRecord_Click"/>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                            </ListView>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- Отчеты -->
+            <TabItem Header="Мои отчеты">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Background="White" Margin="3" Padding="8" CornerRadius="5">
+                        <StackPanel>
+                            <Button Content="Моя статистика" Click="MyStats_Click" Height="30" Margin="0,3"/>
+                            <Button Content="Ежедневный" Click="MyDaily_Click" Height="30" Margin="0,3"/>
+                            <Button Content="Месячный" Click="MyMonthly_Click" Height="30" Margin="0,3"/>
+                            <Button Content="Сравнение" Click="CompareWithOthers_Click" Height="30" Margin="0,3"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Background="White" Margin="3" Padding="8" CornerRadius="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock x:Name="MyReportTitle" Text="Выберите отчет" FontSize="14" FontWeight="Bold"/>
+                                <Button Content="Excel" Click="ExportMyReport_Click" Margin="15,0,3,0" Width="70" Height="25"/>
+                                <Button Content="Печать" Click="PrintMyReport_Click" Margin="3,0,0,0" Width="70" Height="25"/>
+                            </StackPanel>
+
+                            <ScrollViewer Grid.Row="1">
+                                <DataGrid x:Name="MyReportGrid" AutoGenerateColumns="True" IsReadOnly="True"/>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Button Content="Выход" Click="Logout_Click" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                Width="70" Height="28" Margin="10"/>
+    </Grid>
+</Page>
